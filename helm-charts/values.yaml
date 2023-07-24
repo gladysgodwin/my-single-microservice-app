@@ -1,0 +1,63 @@
+replicaCount: 1
+image:
+  repository: gladysgodwin/my-microservice-image
+  tag: v1.0.0
+
+mysql:
+  enabled: true
+  host: mysql
+  port: 3306
+  user: gladys
+
+prometheus:
+  enabled: true
+
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: helper95.
+
+mysqlSecrets:
+  rootPassword: bWljcm9zZXJ2aWNlcGFzc3dvcmQ=
+  databaseName: bWljcm9zZXJ2aWNlZGF0YWJhc2U=
+
+resources:
+  microservice:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  mysql:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+securityContext:
+  microservice:
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+  mysql:
+    runAsUser: 1001
+    allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 3005
+
+ingress:
+  enabled: true
+  hosts:
+    - host: my-microservice.example.com
+      paths: ["/"]
+
+prometheus:
+  enabled: true
+
+grafana:
+  enabled: true

@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = 'gladysgodwin'
+        DOCKER_IMAGE_NAME = 'my-microservice-image'
+        DOCKER_IMAGE_TAG = 'v1.0.0'
+        TERRAFORM_DIR = 'terraform'
+    }
+
+    stages {
+        stage('Build Microservice') {
+            steps {
+                dir('webapp') {
+                    sh 'npm install'
+                    sh 'docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                }
+            }
+        }
+
+        stage('Test with Trivy') {
+            steps {
+                sh "trivy --severity CRITICAL,HIGH,MEDIUM --no-progress ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/') {
+                        sh "docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+
+        stage('Initialize Terraform') {
+            steps {
+                dir(TERRAFORM_DIR) {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Apply Terraform Script') {
+            steps {
+                dir(TERRAFORM_DIR) {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            environment {
+                HELM_RELEASE_NAME = 'my-microservice-release'
+                HELM_CHART_DIR = 'my-microservice/helms-charts'
+            }
+            steps {
+                script {
+                    sh 'helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_DIR} --set image.repository=${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME} --set image.tag=${DOCKER_IMAGE_TAG}'
+                }
+            }
+        }
+    }
+}
