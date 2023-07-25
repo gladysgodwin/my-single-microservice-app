@@ -13,7 +13,7 @@ scrape_configs:
   - job_name: 'my-microservice'
     scrape_interval: 15s
     static_configs:
-      - targets: ['my-microservice:3000']
+      - targets: ['my-microservice:3005']
 
 route:
   group_by: ['alertname', 'job']

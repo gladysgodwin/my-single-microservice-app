@@ -25,14 +25,11 @@ spec:
           envFrom:
             - secretRef:
                 name: mysql-secrets
-          volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
-          resources:
-            {{ toYaml .Values.resources.microservice | indent 12 }}
-          securityContext:
-            {{ toYaml .Values.securityContext.microservice | indent 12 }}
-      volumes:
-        - name: mysql-persistent-storage
-          persistentVolumeClaim:
-            claimName: mysql-pv-claim
+     volumeMounts:
+       - name: mysql-persistent-storage
+         mountPath: /var/lib/mysql
+    
+volumes:
+  - name: mysql-persistent-storage
+    persistentVolumeClaim:
+    claimName: mysql-pv-claim
