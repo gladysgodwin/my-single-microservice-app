@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "grafana-helm-charts.fullname" . }}
+  name: grafana
   labels:
-    {{- include "grafana-helm-charts.labels" . | nindent 4 }}
+    app: grafana
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
   selector:
-    {{- include "grafana-helm-charts.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: grafana
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer

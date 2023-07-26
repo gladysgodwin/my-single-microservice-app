@@ -4,6 +4,11 @@ services:
     build: ./
     ports: 
       - 3005:3000
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: effect
+      DB_DATABASE : test
     networks:
       - frontend
     depends_on:
@@ -14,9 +19,10 @@ services:
     ports:
       - 3310:3306
     environment:
-      - MYSQL_USER=gladys
+      - MYSQL_USER=root
       - MYSQL_PASSWORD=effect
       - MYSQL_DATABASE=test
+      - MYSQL_HOST=mysql
 
     volumes:
       - data:/var/lib/mysql

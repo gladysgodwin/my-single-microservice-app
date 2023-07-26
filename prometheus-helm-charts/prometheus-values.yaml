@@ -5,21 +5,21 @@ alerting:
             - alertmanager:9093
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     scrape_interval: 10s
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
 
-  - job_name: 'my-microservice'
+  - job_name: "my-microservice"
     scrape_interval: 15s
     static_configs:
-      - targets: ['my-microservice:3005']
+      - targets: ["my-microservice:3005"]
 
 route:
-  group_by: ['alertname', 'job']
+  group_by: ["alertname", "job"]
 
 receivers:
-  - name: 'slack-notifications'
+  - name: "slack-notifications"
     slack_configs:
-      - channel: '#your-slack-channel'
-        api_url: 'https://hooks.slack.com/services/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'
+      - channel: "opensis"
+        api_url: "https://hooks.slack.com/services/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"

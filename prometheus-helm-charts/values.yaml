@@ -3,3 +3,8 @@ alertmanager:
 
 server:
   retention: "6h"
+
+service:
+  type: LoadBalancer
+  port: 9090
+  targetPort: 9090
